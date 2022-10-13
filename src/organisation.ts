@@ -1,52 +1,107 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, json } from "@graphprotocol/graph-ts";
 import {
-  Organisation,
   AdminChanged,
   BeaconUpgraded,
-  Upgraded
-} from "../generated/Organisation/Organisation"
-import { ExampleEntity } from "../generated/schema"
+  createOrgProfileEvent,
+  Initialized,
+  Upgraded,
+} from "../generated/Organisation/Organisation";
+import { Skill, Organisation } from "../generated/schema";
+import { ipfs } from "@graphprotocol/graph-ts";
+import { JSONValue, Value } from "@graphprotocol/graph-ts";
+import { log } from "@graphprotocol/graph-ts";
 
-export function handleAdminChanged(event: AdminChanged): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+const SKILL_CID = "bafybeihjt3rgkglzenvytr3m3wyw5db35frysvldobi6t7b5i7ja4qed6u";
+// const SKILL_CID = "bafybeiatfzqendwjo6qrwbx7tosavgmaa34gn5s463wcm3rhf7a3bo3ai4";
+const SKILL_CID_LOCAL = "QmVLSN1629CqzGe2bccwiyi8dL9uHsuaDHQZCWM5PmhDF4";
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+const TRIM_CID_LOCAL = "QmS1wPgbK43pZ4CcCtkerDPoZf7CzCuqYwUUsbFE5LaVUj";
+const TRIM_CID = "bafkreifv77pmv5ejqjiimejeawts5cj5336yeyak3s64fnenulyufrfwua";
+// const TRIM_CID = "bafybeihhsua7k3imaiggpdzrtvc4hobzsnl5p4mpxlxpayidujtigu6gfu";
+const SIMPLE_CID =
+  "bafkreiddwwzah3ie232jywmglvxa3rdhijp2udmffgx3sngy75wvkrwzme";
 
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+const TEST_1 = "bafkreiddwwzah3ie232jywmglvxa3rdhijp2udmffgx3sngy75wvkrwzme";
+const TEST_2_ONE_LINE =
+  "bafkreihhzcpc3tt5xxb7lt5ewggmuf4xajcwkx62tzpya3n2yjoabubmpy";
+
+const MALFORM_ONE_LINE = "QmUBgQNMGg38YFjRbZHsaJV9TjYkGy2CQdsucby6wZiGZv";
+const MALFORM_FULL_SET = "QmePks1sj5JevU5R6NAFHhJR14EFatEYxwLiYUEgnxv1bQ";
+
+export function processItem(value: JSONValue, userData: Value): void {
+  // See the JSONValue documentation for details on dealing
+  // with JSON values
+  log.warning("processItem --", []);
+  // return;
+  let obj = value.toObject();
+  // log.warning("processItem - start:", []);
+
+  if (!obj) {
+    return;
+  }
+  let id = obj.get("id");
+  let name = obj.get("name");
+  let desc = obj.get("description");
+
+  if (!id || !name) {
+    return;
   }
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  // Callbacks can also created entities
+  let newItem = new Skill(id.toString());
+  newItem.name = name.toString();
 
-  // Entity fields can be set based on event parameters
-  entity.previousAdmin = event.params.previousAdmin
-  entity.newAdmin = event.params.newAdmin
+  if (desc) {
+    if (!desc.isNull()) {
+      newItem.description = desc.toString();
+    }
+  }
 
-  // Entities can be written to the store with `.save()`
-  entity.save()
+  let category_id = obj.get("category_id");
+  let subcategory_id = obj.get("subcategory_id");
+  let type = obj.get("type");
 
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
+  if (category_id) {
+    newItem.category_id = category_id.toBigInt();
+  }
 
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // None
+  if (subcategory_id) {
+    newItem.subcategory_id = subcategory_id.toBigInt();
+  }
+
+  if (type) {
+    newItem.type = type.toString();
+  }
+
+  newItem.save();
+}
+
+export function createIPFS(hash: string): void {
+  log.warning("createIPFS hash- {}", [hash]);
+  // ipfs.map(TRIM_CID_LOCAL, "processItem", Value.fromString("Skills"), ["json"]);
+  ipfs.mapJSON(hash, "processItem", Value.fromString("Skills"));
+
+  // let rawData = ipfs.cat(TRIM_CID);
+  // if (!rawData) {
+  //   log.error("Cannot load ipfs data", []);
+  //   return;
+  // }
+  // let array = json.fromBytes(rawData as Bytes).toArray();
+  // array.forEach((value) => {
+  //   processItem(value, Value.fromString("Skill"));
+  // });
+}
+
+export function handleInitContract(event: Initialized): void {
+  createIPFS(MALFORM_FULL_SET);
+}
+
+export function handleCreateOrganisation(event: createOrgProfileEvent): void {
+  let org = new Organisation(event.params.OrgId.toString());
+  org.name = event.params.orgInfo.name;
+  org.description = event.params.orgInfo.description;
+  org.metadataURI = event.params.orgInfo.metadataURI;
+  org.save();
 }
 
 export function handleBeaconUpgraded(event: BeaconUpgraded): void {}

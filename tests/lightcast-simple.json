@@ -1,0 +1,66 @@
+[
+  {
+    "category": { "id": 0, "name": "NULL" },
+    "id": "KS120P86XDXZJT3B7KVJ",
+    "description": null,
+    "name": "(American Society For Quality) ASQ Certified",
+    "subcategory": { "id": 100, "name": "NULL" },
+    "type": { "id": "ST3", "name": "Certification" }
+  },
+  {
+    "category": { "id": 17, "name": "Information Technology" },
+    "description": "\nDefined by Microsoft for use in recent versions of Windows, an assembly in the Common Language Infrastructure (CLI) is a compiled code library used for deployment, versioning, and security. There are two types: process assemblies (EXE) and library assemblies (DLL). A process assembly represents a process that will use classes defined in library assemblies. CLI assemblies contain code in CIL, which is usually generated from a CLI language, and then compiled into machine language at run time by the just-in-time compiler. In the .NET Framework implementation, this compiler is part of the Common Language Runtime (CLR).",
+    "id": "KS126XS6CQCFGC3NG79X",
+    "name": ".NET Assemblies",
+    "subcategory": { "id": 442, "name": "Microsoft Development Tools" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  },
+  {
+    "category": { "id": 5, "name": "Business" },
+    "description": "Yield management is a variable pricing strategy, based on understanding, anticipating and influencing consumer behavior in order to maximize revenue or profits from a fixed, time-limited resource. As a specific, inventory-focused branch of revenue management, yield management involves strategic control of inventory to sell the right product to the right customer at the right time for the right price. This process can result in price discrimination, in which customers consuming identical goods or services are charged different prices. Yield management is a large revenue generator for several major industries; Robert Crandall, former Chairman and CEO of American Airlines, gave yield management its name and has called it \"the single most important technical development in transportation management since we entered deregulation.\"",
+    "id": "KS4428P6STFNTW4NQX3K",
+    "name": "Yield Management",
+    "subcategory": { "id": 161, "name": "Pricing Analysis" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  },
+  {
+    "category": { "id": 0, "name": "NULL" },
+    "description": null,
+    "id": "KSX5GT4A08FVUQ28WAQO",
+    "name": "Yield Return",
+    "subcategory": { "id": 100, "name": "NULL" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  },
+  {
+    "category": { "id": 17, "name": "Information Technology" },
+    "description": null,
+    "id": "KS4428R6JHVBYVG3Q76N",
+    "name": "Yii PHP Framework",
+    "subcategory": { "id": 471, "name": "Scripting Languages" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  },
+  {
+    "category": { "id": 22, "name": "Marketing and Public Relations" },
+    "description": "Yoast SEO is a search engine optimization (SEO) plug-in for WordPress. The plugin has five million active installations and has been downloaded more than 310 million times.",
+    "id": "KSZYONH2OKW1M20H8FQ0",
+    "name": "Yoast",
+    "subcategory": { "id": 558, "name": "Web Analytics and SEO" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  },
+  {
+    "category": { "id": 17, "name": "Information Technology" },
+    "description": "The Yocto Project is a Linux Foundation collaborative open source project whose goal is to produce tools and processes that enable the creation of Linux distributions for embedded and IoT software that are independent of the underlying architecture of the embedded hardware. The project was announced by the Linux Foundation in 2010 and launched in March, 2011, in collaboration with 22 organizations, including OpenEmbedded.",
+    "id": "KS4428T7724KPF51021V",
+    "name": "Yocto Project",
+    "subcategory": { "id": 474, "name": "Software Development" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  },
+  {
+    "category": { "id": 0, "name": "NULL" },
+    "description": "Yodlee is an American software company that develops an account aggregation service that allows users to see their credit card, bank, investment, email, travel reward accounts, etc. on one screen. In addition, Money by Envestnet Yodlee, a free web application that helps consumers with their finances online, provides features such as bill payment, expense tracking, and investment management. Yodlee's Privacy Policy FAQ references Yodlee as a licensee of the TRUSTe Privacy Program. Part of Yodlee's business model consists of selling its customer's financial transaction data to investors.",
+    "id": "KS63JQEF32TO2W443V5N",
+    "name": "Yodlee",
+    "subcategory": { "id": 100, "name": "NULL" },
+    "type": { "id": "ST1", "name": "Specialized Skill" }
+  }
+]

@@ -1,0 +1,23 @@
+type ContractAdmin @entity {
+  id: ID!
+  count: BigInt!
+  previousAdmin: Bytes! # address
+  newAdmin: Bytes! # address
+}
+
+type Organisation @entity {
+  id: ID!
+  name: String
+  description: String
+  metadataURI: String
+}
+
+type Skill @entity {
+  id: String!
+  name: String!
+  description: String
+  category_id: BigInt
+  subcategory_id: BigInt
+  type: String
+  # type: String!
+}

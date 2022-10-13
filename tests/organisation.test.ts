@@ -4,54 +4,106 @@ import {
   test,
   clearStore,
   beforeAll,
-  afterAll
-} from "matchstick-as/assembly/index"
-import { Address } from "@graphprotocol/graph-ts"
-import { ExampleEntity } from "../generated/schema"
-import { AdminChanged } from "../generated/Organisation/Organisation"
-import { handleAdminChanged } from "../src/organisation"
-import { createAdminChangedEvent } from "./organisation-utils"
+  afterAll,
+  mockIpfsFile,
+} from "matchstick-as/assembly/index";
+import { Address, ipfs, JSONValue, Value } from "@graphprotocol/graph-ts";
+import { Organisation, Skill } from "../generated/schema";
+import {
+  AdminChanged,
+  Initialized,
+} from "../generated/Organisation/Organisation";
+import { createIPFS, handleCreateOrganisation } from "../src/organisation";
+import { createAdminChangedEvent } from "./organisation-utils";
+import { log } from "matchstick-as/assembly/log";
+
+import { processItem } from "../src/Organisation";
+export { processItem } from "../src/Organisation";
 
 // Tests structure (matchstick-as >=0.5.0)
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
-describe("Describe entity assertions", () => {
+const SKILL_CID = "bafybeiavqybeku2nx4gm5dzqxde2qf3kfqa7jvihrsvf52ovhqk5trccee";
+
+export function processItem2(value: JSONValue, userData: Value): void {
+  // See the JSONValue documentation for details on dealing
+  // with JSON values
+  let obj = value.toObject();
+
+  if (!obj) {
+    return;
+  }
+  let id = obj.get("id");
+  let name = obj.get("name");
+  let desc = obj.get("description");
+
+  // let typeObj = obj.get("type");
+  // let type = typeObj? typeObj.toObject().get("name") : null;
+
+  log.warning("processingItem...", []);
+  if (!id || !name) {
+    log.warning("data is null...!", []);
+    return;
+  }
+
+  if (desc) {
+    if (!desc.isNull()) {
+      log.warning("for each item, desc {}", [desc.toString()]);
+    }
+  }
+
+  log.warning("for each item, id {} ", [id.toString()]);
+  log.warning("for each item, name {}", [name.toString()]);
+
+  // Callbacks can also created entities
+  // let newItem = new Skill(id.toString());
+  // newItem.name = name.toString();
+  // newItem.description = desc.toString();
+
+  // if (typeObj) {
+  //   newItem.type = type.toString();
+  // }
+  // newItem.save();
+}
+
+describe("IPFS checking", () => {
   beforeAll(() => {
     let previousAdmin = Address.fromString(
       "0x0000000000000000000000000000000000000001"
-    )
+    );
     let newAdmin = Address.fromString(
       "0x0000000000000000000000000000000000000001"
-    )
-    let newAdminChangedEvent = createAdminChangedEvent(previousAdmin, newAdmin)
-    handleAdminChanged(newAdminChangedEvent)
-  })
+    );
+
+    mockIpfsFile("ipfsCatFileHash", "tests/lightcast.json");
+    mockIpfsFile("ipfsCatFileHash-trim", "tests/lightcast-simple.json");
+  });
 
   afterAll(() => {
-    clearStore()
-  })
+    clearStore();
+  });
 
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test("ExampleEntity created and stored", () => {
-    assert.entityCount("ExampleEntity", 1)
+  test("ipfs.map", () => {
+    ipfs.mapJSON(
+      "ipfsCatFileHash-trim",
+      "processItem",
+      Value.fromString("Skills")
+    );
+    assert.entityCount("Skill", 8);
+  });
 
-    // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
-    assert.fieldEquals(
-      "ExampleEntity",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
-      "previousAdmin",
-      "0x0000000000000000000000000000000000000001"
-    )
-    assert.fieldEquals(
-      "ExampleEntity",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
-      "newAdmin",
-      "0x0000000000000000000000000000000000000001"
-    )
+  test("ipfs.map function calling", () => {
+    createIPFS("ipfsCatFileHash-trim");
+    assert.entityCount("Skill", 8);
 
-    // More assert options:
-    // https://thegraph.com/docs/en/developer/matchstick/#asserts
-  })
-})
+    assert.fieldEquals(
+      "Skill",
+      "KS126XS6CQCFGC3NG79X",
+      "name",
+      ".NET Assemblies"
+    );
+  });
+});
