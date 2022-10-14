@@ -29,5 +29,7 @@ dataSources:
           handler: handleBeaconUpgraded
         - event: Upgraded(indexed address)
           handler: handleUpgraded
+        - event: updateOrgProfileEvent(uint256,address,(string,string,string,address[]))
+          handler: handleUpdateOrganisation
       file: ./src/organisation.ts
 features: ["ipfsOnEthereumContracts"]
