@@ -3,6 +3,8 @@ import { ethereum, Address } from "@graphprotocol/graph-ts"
 import {
   AdminChanged,
   BeaconUpgraded,
+  createOrgProfileEvent,
+  updateOrgProfileEvent,
   Upgraded
 } from "../generated/Organisation/Organisation"
 
@@ -52,4 +54,65 @@ export function createUpgradedEvent(implementation: Address): Upgraded {
   )
 
   return upgradedEvent
+}
+
+export function createCreateOrgProfileEvent(
+  id: i32, 
+  name: string, 
+  description: string, 
+  uri: string)
+: createOrgProfileEvent{
+  let event = changetype<createOrgProfileEvent>(newMockEvent());
+  event.parameters = new Array();
+
+  let idParam = new ethereum.EventParam("id", ethereum.Value.fromI32(id))
+
+  let eventBadgeArray: Address[] = new Array()
+
+  let orgInfoArray: Array<ethereum.Value> = [
+    ethereum.Value.fromString(name),
+    ethereum.Value.fromString(description),
+    ethereum.Value.fromString(uri),
+    ethereum.Value.fromAddressArray(eventBadgeArray),
+  ]
+  let orgInfo = changetype<ethereum.Tuple>(orgInfoArray);
+
+  let orgParam = new ethereum.EventParam("orgInfo", ethereum.Value.fromTuple(orgInfo))
+
+  event.parameters.push(idParam)
+  event.parameters.push(orgParam)
+
+  return event
+}
+
+export function createUpdateOrgProfileEvent(
+  id: i32,
+  operatorAddress: Address, 
+  name: string, 
+  description: string, 
+  uri: string)
+: updateOrgProfileEvent{
+  let event = changetype<updateOrgProfileEvent>(newMockEvent());
+  event.parameters = new Array();
+
+  let idParam = new ethereum.EventParam("id", ethereum.Value.fromI32(id))
+  let operatorParam = new ethereum.EventParam("operatorAddress", ethereum.Value.fromAddress(operatorAddress))
+
+  let eventBadgeArray: Address[] = new Array()
+
+  let orgInfoArray: Array<ethereum.Value> = [
+    ethereum.Value.fromString(name),
+    ethereum.Value.fromString(description),
+    ethereum.Value.fromString(uri),
+    ethereum.Value.fromAddressArray(eventBadgeArray),
+  ]
+  let orgInfo = changetype<ethereum.Tuple>(orgInfoArray);
+
+  let orgParam = new ethereum.EventParam("orgInfo", ethereum.Value.fromTuple(orgInfo))
+
+  event.parameters.push(idParam)
+  event.parameters.push(operatorParam)
+  event.parameters.push(orgParam)
+
+  return event
 }

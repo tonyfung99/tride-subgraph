@@ -12,9 +12,10 @@ import { Organisation, Skill } from "../generated/schema";
 import {
   AdminChanged,
   Initialized,
+  updateOrgProfileEvent,
 } from "../generated/Organisation/Organisation";
-import { createIPFS, handleCreateOrganisation } from "../src/organisation";
-import { createAdminChangedEvent } from "./organisation-utils";
+import { createIPFS, handleCreateOrganisation, handleUpdateOrganisation } from "../src/organisation";
+import { createCreateOrgProfileEvent, createUpdateOrgProfileEvent } from "./organisation-utils";
 import { log } from "matchstick-as/assembly/log";
 
 import { processItem } from "../src/Organisation";
@@ -66,44 +67,73 @@ export function processItem2(value: JSONValue, userData: Value): void {
   // newItem.save();
 }
 
-describe("IPFS checking", () => {
+// describe("IPFS checking", () => {
+//   beforeAll(() => {
+//     let previousAdmin = Address.fromString(
+//       "0x0000000000000000000000000000000000000001"
+//     );
+//     let newAdmin = Address.fromString(
+//       "0x0000000000000000000000000000000000000001"
+//     );
+
+//     mockIpfsFile("ipfsCatFileHash", "tests/lightcast.json");
+//     mockIpfsFile("ipfsCatFileHash-trim", "tests/lightcast-simple.json");
+//   });
+
+//   afterAll(() => {
+//     clearStore();
+//   });
+
+//   // For more test scenarios, see:
+//   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
+
+//   test("ipfs.map", () => {
+//     ipfs.mapJSON(
+//       "ipfsCatFileHash-trim",
+//       "processItem",
+//       Value.fromString("Skills")
+//     );
+//     assert.entityCount("Skill", 8);
+//   });
+
+//   test("ipfs.map function calling", () => {
+//     createIPFS("ipfsCatFileHash-trim");
+//     assert.entityCount("Skill", 8);
+
+//     assert.fieldEquals(
+//       "Skill",
+//       "KS126XS6CQCFGC3NG79X",
+//       "name",
+//       ".NET Assemblies"
+//     );
+//   });
+// });
+
+describe("Organisation", () => {
   beforeAll(() => {
-    let previousAdmin = Address.fromString(
+    
+  })
+
+  test("store organisation", () => {
+    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://123123123"))
+
+    assert.fieldEquals("Organisation", "0", "id", "0");
+    assert.fieldEquals("Organisation", "0", "name", "Org_1");
+    assert.fieldEquals("Organisation", "0", "description", "description of Org_1");
+    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://123123123");
+  })
+
+  test("update organisation", () => {
+    let firstAdmin = Address.fromString(
       "0x0000000000000000000000000000000000000001"
     );
-    let newAdmin = Address.fromString(
-      "0x0000000000000000000000000000000000000001"
-    );
 
-    mockIpfsFile("ipfsCatFileHash", "tests/lightcast.json");
-    mockIpfsFile("ipfsCatFileHash-trim", "tests/lightcast-simple.json");
-  });
+    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://123123123"))
 
-  afterAll(() => {
-    clearStore();
-  });
-
-  // For more test scenarios, see:
-  // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
-
-  test("ipfs.map", () => {
-    ipfs.mapJSON(
-      "ipfsCatFileHash-trim",
-      "processItem",
-      Value.fromString("Skills")
-    );
-    assert.entityCount("Skill", 8);
-  });
-
-  test("ipfs.map function calling", () => {
-    createIPFS("ipfsCatFileHash-trim");
-    assert.entityCount("Skill", 8);
-
-    assert.fieldEquals(
-      "Skill",
-      "KS126XS6CQCFGC3NG79X",
-      "name",
-      ".NET Assemblies"
-    );
-  });
+    handleUpdateOrganisation(createUpdateOrgProfileEvent(0, firstAdmin, "Org_1_update", "description of Org_1", "ipfs://123123123"))
+    assert.fieldEquals("Organisation", "0", "id", "0");
+    assert.fieldEquals("Organisation", "0", "name", "Org_1_update");
+    assert.fieldEquals("Organisation", "0", "description", "description of Org_1");
+    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://123123123");
+  })
 });

@@ -4,6 +4,7 @@ import {
   BeaconUpgraded,
   createOrgProfileEvent,
   Initialized,
+  updateOrgProfileEvent,
   Upgraded,
 } from "../generated/Organisation/Organisation";
 import { Skill, Organisation } from "../generated/schema";
@@ -107,3 +108,14 @@ export function handleCreateOrganisation(event: createOrgProfileEvent): void {
 export function handleBeaconUpgraded(event: BeaconUpgraded): void {}
 
 export function handleUpgraded(event: Upgraded): void {}
+
+export function handleUpdateOrganisation(event: updateOrgProfileEvent): void {
+  const orgId = event.params.OrgId.toString()
+  let org = Organisation.load(orgId);
+  if (org != null) {
+    org.name = event.params.orgInfo.name;
+    org.description = event.params.orgInfo.description;
+    org.metadataURI = event.params.orgInfo.metadataURI;
+    org.save();
+  }
+}
