@@ -7,14 +7,8 @@ import {
   afterAll,
   mockIpfsFile,
 } from "matchstick-as/assembly/index";
-import { Address, ipfs, JSONValue, Value } from "@graphprotocol/graph-ts";
-import { Organisation, Skill } from "../generated/schema";
-import {
-  AdminChanged,
-  Initialized,
-  updateOrgProfileEvent,
-} from "../generated/Organisation/Organisation";
-import { createIPFS, handleCreateOrganisation, handleUpdateOrganisation } from "../src/organisation";
+import { Address, JSONValue, Value } from "@graphprotocol/graph-ts";
+import { handleCreateOrganisation, handleUpdateOrganisation } from "../src/organisation";
 import { createCreateOrgProfileEvent, createUpdateOrgProfileEvent } from "./organisation-utils";
 import { log } from "matchstick-as/assembly/log";
 
@@ -111,16 +105,22 @@ export function processItem2(value: JSONValue, userData: Value): void {
 
 describe("Organisation", () => {
   beforeAll(() => {
-    
+    mockIpfsFile('FAKE_ORGANISATION_1', 'tests/ipfs_file/organisations/organisation_1.json')
+    mockIpfsFile('FAKE_ORGANISATION_2', 'tests/ipfs_file/organisations/organisation_2.json')
   })
 
   test("store organisation", () => {
-    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://123123123"))
+    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://FAKE_ORGANISATION_1"))
 
     assert.fieldEquals("Organisation", "0", "id", "0");
     assert.fieldEquals("Organisation", "0", "name", "Org_1");
     assert.fieldEquals("Organisation", "0", "description", "description of Org_1");
-    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://123123123");
+    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://FAKE_ORGANISATION_1");
+    assert.fieldEquals("Organisation", "0", "websiteURL", "https://www.esperanza.life/");
+    assert.fieldEquals("Organisation", "0", "twitterId", "/");
+    assert.fieldEquals("Organisation", "0", "discordServer", "/");
+    assert.fieldEquals("Organisation", "0", "contactEmail", "/");
+    assert.fieldEquals("Organisation", "0", "industry", "/");
   })
 
   test("update organisation", () => {
@@ -128,12 +128,17 @@ describe("Organisation", () => {
       "0x0000000000000000000000000000000000000001"
     );
 
-    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://123123123"))
+    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://FAKE_ORGANISATION_1"))
 
-    handleUpdateOrganisation(createUpdateOrgProfileEvent(0, firstAdmin, "Org_1_update", "description of Org_1", "ipfs://123123123"))
+    handleUpdateOrganisation(createUpdateOrgProfileEvent(0, firstAdmin, "Org_1_update", "description of Org_1", "ipfs://FAKE_ORGANISATION_2"))
     assert.fieldEquals("Organisation", "0", "id", "0");
     assert.fieldEquals("Organisation", "0", "name", "Org_1_update");
     assert.fieldEquals("Organisation", "0", "description", "description of Org_1");
-    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://123123123");
+    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://FAKE_ORGANISATION_2");
+    assert.fieldEquals("Organisation", "0", "websiteURL", "https://www.esperanza.life/");
+    assert.fieldEquals("Organisation", "0", "twitterId", "/");
+    assert.fieldEquals("Organisation", "0", "discordServer", "/");
+    assert.fieldEquals("Organisation", "0", "contactEmail", "/");
+    assert.fieldEquals("Organisation", "0", "industry", "updated");
   })
 });

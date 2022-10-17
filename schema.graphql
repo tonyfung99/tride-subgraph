@@ -10,6 +10,11 @@ type Organisation @entity {
   name: String
   description: String
   metadataURI: String
+  websiteURL: String
+  twitterId: String
+  discordServer: String
+  contactEmail: String
+  industry: String
 }
 
 type Skill @entity {

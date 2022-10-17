@@ -1,4 +1,4 @@
-import { BigInt, Bytes, json } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, json, TypedMap } from "@graphprotocol/graph-ts";
 import {
   AdminChanged,
   BeaconUpgraded,
@@ -97,11 +97,54 @@ export function handleInitContract(event: Initialized): void {
   createIPFS(MALFORM_FULL_SET);
 }
 
+function getIPFSJSON(url: string): TypedMap<string, JSONValue> | null{
+  const hash = url.replace('ipfs://', '');
+  const BytesData = ipfs.cat(hash);
+  if(BytesData){
+    return json.fromBytes(BytesData).toObject();
+  }
+  return null;
+}
+
 export function handleCreateOrganisation(event: createOrgProfileEvent): void {
   let org = new Organisation(event.params.OrgId.toString());
   org.name = event.params.orgInfo.name;
   org.description = event.params.orgInfo.description;
   org.metadataURI = event.params.orgInfo.metadataURI;
+  org.websiteURL = "/";
+  org.twitterId = "/";
+  org.discordServer = "/";
+  org.contactEmail = "/";
+  org.industry = "/";
+  org.events = [];
+
+  const ipfs_data = getIPFSJSON(event.params.orgInfo.metadataURI);
+  if(ipfs_data){
+    let websiteURL = ipfs_data.get("websiteURL")
+    if(websiteURL){
+      org.websiteURL = websiteURL.toString()
+    }
+
+    let twitterId = ipfs_data.get("twitterId")
+    if(twitterId){
+      org.twitterId = twitterId.toString()
+    }
+
+    let discordServer = ipfs_data.get("discordServer")
+    if(discordServer){
+      org.discordServer = discordServer.toString()
+    }
+
+    let contactEmail = ipfs_data.get("contactEmail")
+    if(contactEmail){
+      org.contactEmail = contactEmail.toString()
+    }
+
+    let industry = ipfs_data.get("industry")
+    if(industry){
+      org.industry = industry.toString()
+    }
+  }
   org.save();
 }
 
@@ -116,6 +159,35 @@ export function handleUpdateOrganisation(event: updateOrgProfileEvent): void {
     org.name = event.params.orgInfo.name;
     org.description = event.params.orgInfo.description;
     org.metadataURI = event.params.orgInfo.metadataURI;
+
+    const ipfs_data = getIPFSJSON(event.params.orgInfo.metadataURI);
+    if(ipfs_data){
+      let websiteURL = ipfs_data.get("websiteURL")
+      if(websiteURL){
+        org.websiteURL = websiteURL.toString()
+      }
+  
+      let twitterId = ipfs_data.get("twitterId")
+      if(twitterId){
+        org.twitterId = twitterId.toString()
+      }
+  
+      let discordServer = ipfs_data.get("discordServer")
+      if(discordServer){
+        org.discordServer = discordServer.toString()
+      }
+  
+      let contactEmail = ipfs_data.get("contactEmail")
+      if(contactEmail){
+        org.contactEmail = contactEmail.toString()
+      }
+  
+      let industry = ipfs_data.get("industry")
+      if(industry){
+        org.industry = industry.toString()
+      }
+    }
+    
     org.save();
   }
 }
