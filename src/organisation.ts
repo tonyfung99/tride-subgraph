@@ -3,11 +3,12 @@ import {
   AdminChanged,
   BeaconUpgraded,
   createOrgProfileEvent,
+  EventCreatedEvent,
   Initialized,
   updateOrgProfileEvent,
   Upgraded,
 } from "../generated/Organisation/Organisation";
-import { Skill, Organisation } from "../generated/schema";
+import { Skill, Organisation, Event } from "../generated/schema";
 import { ipfs } from "@graphprotocol/graph-ts";
 import { JSONValue, Value } from "@graphprotocol/graph-ts";
 import { log } from "@graphprotocol/graph-ts";
@@ -79,21 +80,11 @@ export function processItem(value: JSONValue, userData: Value): void {
 
 export function createIPFS(hash: string): void {
   log.warning("createIPFS hash- {}", [hash]);
-  // ipfs.map(TRIM_CID_LOCAL, "processItem", Value.fromString("Skills"), ["json"]);
   ipfs.mapJSON(hash, "processItem", Value.fromString("Skills"));
-
-  // let rawData = ipfs.cat(TRIM_CID);
-  // if (!rawData) {
-  //   log.error("Cannot load ipfs data", []);
-  //   return;
-  // }
-  // let array = json.fromBytes(rawData as Bytes).toArray();
-  // array.forEach((value) => {
-  //   processItem(value, Value.fromString("Skill"));
-  // });
 }
 
 export function handleInitContract(event: Initialized): void {
+  log.info("skill Record", []);
   createIPFS(MALFORM_FULL_SET);
 }
 
@@ -116,7 +107,6 @@ export function handleCreateOrganisation(event: createOrgProfileEvent): void {
   org.discordServer = "/";
   org.contactEmail = "/";
   org.industry = "/";
-  org.events = [];
 
   const ipfs_data = getIPFSJSON(event.params.orgInfo.metadataURI);
   if(ipfs_data){
@@ -189,5 +179,21 @@ export function handleUpdateOrganisation(event: updateOrgProfileEvent): void {
     }
     
     org.save();
+  }
+}
+
+export function handleEventCreatedEvent(event: EventCreatedEvent): void {
+  const relatedOrgisation = Organisation.load(event.params.OrgId.toString());
+  if(relatedOrgisation != null){
+    let eventObj = new Event(event.params.eventContractAddress.toHex())
+
+    eventObj.code = event.params.code
+    eventObj.name = event.params.name
+    eventObj.start_date = event.params.start_date
+    eventObj.end_date = event.params.end_date
+    eventObj.contractAddress = event.params.eventContractAddress
+  
+    eventObj.organisation = relatedOrgisation.id
+    eventObj.save()
   }
 }

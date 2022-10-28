@@ -61,6 +61,49 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "OrgId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "code",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "start_date",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "end_date",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "eventContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "EventCreatedEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint8",
         "name": "version",
         "type": "uint8"
@@ -252,7 +295,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct Organisations.OrgProfile",
+        "internalType": "struct DataTypes.OrgProfile",
         "name": "orgInfo",
         "type": "tuple"
       }
@@ -324,7 +367,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct Organisations.OrgProfile",
+        "internalType": "struct DataTypes.OrgProfile",
         "name": "orgInfo",
         "type": "tuple"
       }
@@ -492,6 +535,52 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "OrgId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "code",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "start_date",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "end_date",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DataTypes.EventInfo",
+        "name": "eventInfo",
+        "type": "tuple"
+      }
+    ],
+    "name": "createEvent",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "_firstAdmin",
         "type": "address"
@@ -543,6 +632,69 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "eventContractAddresses",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "eventContractInfos",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "code",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start_date",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end_date",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "id",
         "type": "uint256"
       }
@@ -553,6 +705,32 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEIP712Name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEIP712Version",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",

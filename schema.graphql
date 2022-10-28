@@ -15,6 +15,7 @@ type Organisation @entity {
   discordServer: String
   contactEmail: String
   industry: String
+  events: [Event!]! @derivedFrom(field: "organisation")
 }
 
 type Skill @entity {
@@ -24,5 +25,26 @@ type Skill @entity {
   category_id: BigInt
   subcategory_id: BigInt
   type: String
-  # type: String!
+}
+
+type Event @entity {
+  id: ID!
+  code: String
+  name: String
+  start_date: BigInt
+  end_date: BigInt
+  contractAddress: Bytes! # Address
+  organisation: Organisation!
+  event_badges: [EventBadge!]
+}
+
+type EventBadge @entity{
+  id: ID!
+  tokenId: BigInt!
+  name: String
+  description: String
+  start_date: BigInt
+  end_date: BigInt
+  role: String
+  quota: BigInt
 }

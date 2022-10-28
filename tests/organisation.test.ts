@@ -8,8 +8,8 @@ import {
   mockIpfsFile,
 } from "matchstick-as/assembly/index";
 import { Address, JSONValue, Value } from "@graphprotocol/graph-ts";
-import { handleCreateOrganisation, handleUpdateOrganisation } from "../src/organisation";
-import { createCreateOrgProfileEvent, createUpdateOrgProfileEvent } from "./organisation-utils";
+import { handleCreateOrganisation, handleEventCreatedEvent, handleUpdateOrganisation } from "../src/organisation";
+import { createCreateOrgProfileEvent, createEventCreatedEvent, createUpdateOrgProfileEvent } from "./organisation-utils";
 import { log } from "matchstick-as/assembly/log";
 
 import { processItem } from "../src/Organisation";
@@ -140,5 +140,21 @@ describe("Organisation", () => {
     assert.fieldEquals("Organisation", "0", "discordServer", "/");
     assert.fieldEquals("Organisation", "0", "contactEmail", "/");
     assert.fieldEquals("Organisation", "0", "industry", "updated");
+  })
+  
+  test("create event contract", () => {
+    let newContract = Address.fromString(
+      "0x0000000000000000000000000000000000000001"
+    );
+
+    handleEventCreatedEvent(createEventCreatedEvent(0, "code", "name", 0, 1, newContract));
+
+    assert.fieldEquals("Event", newContract.toHex(), "id", newContract.toHex());
+    assert.fieldEquals("Event", newContract.toHex(), "code", "code");
+    assert.fieldEquals("Event", newContract.toHex(), "name", "name");
+    assert.fieldEquals("Event", newContract.toHex(), "start_date", "0");
+    assert.fieldEquals("Event", newContract.toHex(), "end_date", "1");
+    assert.fieldEquals("Event", newContract.toHex(), "contractAddress", newContract.toHex());
+    assert.fieldEquals("Event", newContract.toHex(), "organisation", "0");
   })
 });

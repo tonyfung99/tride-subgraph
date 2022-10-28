@@ -4,6 +4,7 @@ import {
   AdminChanged,
   BeaconUpgraded,
   createOrgProfileEvent,
+  EventCreatedEvent,
   updateOrgProfileEvent,
   Upgraded
 } from "../generated/Organisation/Organisation"
@@ -113,6 +114,37 @@ export function createUpdateOrgProfileEvent(
   event.parameters.push(idParam)
   event.parameters.push(operatorParam)
   event.parameters.push(orgParam)
+
+  return event
+}
+
+export function createEventCreatedEvent(
+  orgId: i32,
+  code: string,
+  name: string,
+  start_date:i32,
+  end_date: i32,
+  eventAddress: Address
+)
+: EventCreatedEvent{
+  // @todo
+  let event = changetype<EventCreatedEvent>(newMockEvent());
+  event.parameters = new Array();
+
+  const orgIdParam = new ethereum.EventParam("OrgId", ethereum.Value.fromI32(orgId))
+  const codeParam = new ethereum.EventParam("code", ethereum.Value.fromString(code))
+  const nameParam = new ethereum.EventParam("name", ethereum.Value.fromString(name))
+  const startDateParam = new ethereum.EventParam("start_date", ethereum.Value.fromI32(start_date))
+  const endDateParam = new ethereum.EventParam("end_date", ethereum.Value.fromI32(end_date))
+  const contractAddressParam = new ethereum.EventParam("eventAddress", ethereum.Value.fromAddress(eventAddress))
+
+
+  event.parameters.push(orgIdParam)
+  event.parameters.push(codeParam)
+  event.parameters.push(nameParam)
+  event.parameters.push(startDateParam)
+  event.parameters.push(endDateParam)
+  event.parameters.push(contractAddressParam)
 
   return event
 }
