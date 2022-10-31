@@ -1,0 +1,34 @@
+{
+    "name": "Edventures GBA Summit – Speaker: Future Proof Yourself",
+    "image": "ipfs://bafybeidblmdfrgozdwk6jneeipsty2ybdifizqbpuhyu2l35svq7ezdc7q/2.%20A%20New%20World%20of%20Learning.jpg",
+    "description": "",
+    "session_start_datetime": 1665676800,
+    "session_end_datetime": 1665676800,
+    "event_name": "Edventures GBA Summit – Future Proof Yourself: A New World of Learning Powered by Technology",
+    "event_description": "This Summit gathers leaders, talent development experts, EdTech innovators and technology specialist to look into  \n• talent development needs and trends in Hong Kong and the wider Asia region \n• applications of emerging technologies (AI, blockchain, data analytics and XR) to make adult learning more flexible, engaging, personalised and cost effective \n• roles of government, business and NGO in reskilling and upskilling the workforce \n  • EdTech investment market and business opportunities in Asia",
+    "event_start_datetime": 1665676800,
+    "event_end_datetime": 1665676800,
+    "preview_image_url": "",
+    "event_image_url": "",
+    "address": "Studio 303, Chong Yuet Ming Amenities Centre, HKU",
+    "location": {
+      "latitude": 22.283426633754537,
+      "longitude": 114.14228741191079
+    },
+    "role": "Speaker",
+    "related_word": ["Asia", "Talent Development"],
+    "attributes": [
+      {
+        "trait_type": "Badge Type",
+        "value": "Event"
+      },
+      {
+        "trait_type": "Event Type",
+        "value": "Summit"
+      },
+      {
+        "trait_type": "Role",
+        "value": "Speaker"
+      }
+    ]
+  }

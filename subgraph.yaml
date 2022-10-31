@@ -6,9 +6,9 @@ dataSources:
     name: Organisation
     network: mbase
     source: 
-      address: "0x2915BBe7eec68717DAF31B379802fE2BA112c3d4"
+      address: "0xe3Fc5B4bAA3ABA6e48463C4445dA05a33405CAc8"
       abi: Organisation
-      startBlock: 2889660
+      startBlock: 3071700
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -17,6 +17,8 @@ dataSources:
         - ContractAdmin
         - Organisation
         - Skill
+        - Event
+        - User
       abis:
         - name: Organisation
           file: ./abis/Organisation.json
@@ -31,5 +33,32 @@ dataSources:
           handler: handleUpgraded
         - event: updateOrgProfileEvent(uint256,address,(string,string,string,address[]))
           handler: handleUpdateOrganisation
+        - event: EventCreatedEvent(uint256,string,string,uint256,uint256,address)
+          handler: handleEventCreatedEvent
       file: ./src/organisation.ts
+templates:
+  - name: EventBadge
+    kind: ethereum/contract
+    network: mbase
+    source:
+      abi: EventBadge
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - EventBadge
+      abis:
+        - name: EventBadge
+          file: ./abis/EventBadge.json
+      eventHandlers:
+        - event: createdEventSession(indexed address,uint256,(string,string,uint256,uint256,string,string,uint256))
+          handler: handleCreateEventSession
+        - event: updatedEventSession(indexed address,uint256,(string,string,uint256,uint256,string,string,uint256))
+          handler: handleUpdateEventSession
+        - event: addedInvitee(indexed address,uint256,indexed address)
+          handler: handleAddedInvitee
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleMint
+      file: ./src/eventBadge.ts
 features: ["ipfsOnEthereumContracts"]

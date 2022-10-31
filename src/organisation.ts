@@ -3,14 +3,17 @@ import {
   AdminChanged,
   BeaconUpgraded,
   createOrgProfileEvent,
+  EventCreatedEvent,
   Initialized,
   updateOrgProfileEvent,
   Upgraded,
 } from "../generated/Organisation/Organisation";
-import { Skill, Organisation } from "../generated/schema";
+import { Skill, Organisation, Event } from "../generated/schema";
 import { ipfs } from "@graphprotocol/graph-ts";
 import { JSONValue, Value } from "@graphprotocol/graph-ts";
 import { log } from "@graphprotocol/graph-ts";
+import { EventBadge } from "../generated/templates";
+import { getJSONFromIPFS } from "./helper/utils";
 
 const SKILL_CID = "bafybeihjt3rgkglzenvytr3m3wyw5db35frysvldobi6t7b5i7ja4qed6u";
 // const SKILL_CID = "bafybeiatfzqendwjo6qrwbx7tosavgmaa34gn5s463wcm3rhf7a3bo3ai4";
@@ -79,31 +82,12 @@ export function processItem(value: JSONValue, userData: Value): void {
 
 export function createIPFS(hash: string): void {
   log.warning("createIPFS hash- {}", [hash]);
-  // ipfs.map(TRIM_CID_LOCAL, "processItem", Value.fromString("Skills"), ["json"]);
   ipfs.mapJSON(hash, "processItem", Value.fromString("Skills"));
-
-  // let rawData = ipfs.cat(TRIM_CID);
-  // if (!rawData) {
-  //   log.error("Cannot load ipfs data", []);
-  //   return;
-  // }
-  // let array = json.fromBytes(rawData as Bytes).toArray();
-  // array.forEach((value) => {
-  //   processItem(value, Value.fromString("Skill"));
-  // });
 }
 
 export function handleInitContract(event: Initialized): void {
+  log.info("skill Record", []);
   createIPFS(MALFORM_FULL_SET);
-}
-
-function getIPFSJSON(url: string): TypedMap<string, JSONValue> | null{
-  const hash = url.replace('ipfs://', '');
-  const BytesData = ipfs.cat(hash);
-  if(BytesData){
-    return json.fromBytes(BytesData).toObject();
-  }
-  return null;
 }
 
 export function handleCreateOrganisation(event: createOrgProfileEvent): void {
@@ -116,33 +100,37 @@ export function handleCreateOrganisation(event: createOrgProfileEvent): void {
   org.discordServer = "/";
   org.contactEmail = "/";
   org.industry = "/";
-  org.events = [];
 
-  const ipfs_data = getIPFSJSON(event.params.orgInfo.metadataURI);
-  if(ipfs_data){
-    let websiteURL = ipfs_data.get("websiteURL")
-    if(websiteURL){
-      org.websiteURL = websiteURL.toString()
+  const ipfs_data = getJSONFromIPFS(event.params.orgInfo.metadataURI);
+  if (ipfs_data) {
+    let imageURL = ipfs_data.get("websiteURL");
+    if (imageURL) {
+      org.image = imageURL.toString();
     }
 
-    let twitterId = ipfs_data.get("twitterId")
-    if(twitterId){
-      org.twitterId = twitterId.toString()
+    let websiteURL = ipfs_data.get("websiteURL");
+    if (websiteURL) {
+      org.websiteURL = websiteURL.toString();
     }
 
-    let discordServer = ipfs_data.get("discordServer")
-    if(discordServer){
-      org.discordServer = discordServer.toString()
+    let twitterId = ipfs_data.get("twitterId");
+    if (twitterId) {
+      org.twitterId = twitterId.toString();
     }
 
-    let contactEmail = ipfs_data.get("contactEmail")
-    if(contactEmail){
-      org.contactEmail = contactEmail.toString()
+    let discordServer = ipfs_data.get("discordServer");
+    if (discordServer) {
+      org.discordServer = discordServer.toString();
     }
 
-    let industry = ipfs_data.get("industry")
-    if(industry){
-      org.industry = industry.toString()
+    let contactEmail = ipfs_data.get("contactEmail");
+    if (contactEmail) {
+      org.contactEmail = contactEmail.toString();
+    }
+
+    let industry = ipfs_data.get("industry");
+    if (industry) {
+      org.industry = industry.toString();
     }
   }
   org.save();
@@ -153,41 +141,66 @@ export function handleBeaconUpgraded(event: BeaconUpgraded): void {}
 export function handleUpgraded(event: Upgraded): void {}
 
 export function handleUpdateOrganisation(event: updateOrgProfileEvent): void {
-  const orgId = event.params.OrgId.toString()
+  const orgId = event.params.OrgId.toString();
   let org = Organisation.load(orgId);
   if (org != null) {
     org.name = event.params.orgInfo.name;
     org.description = event.params.orgInfo.description;
     org.metadataURI = event.params.orgInfo.metadataURI;
 
-    const ipfs_data = getIPFSJSON(event.params.orgInfo.metadataURI);
-    if(ipfs_data){
-      let websiteURL = ipfs_data.get("websiteURL")
-      if(websiteURL){
-        org.websiteURL = websiteURL.toString()
+    const ipfs_data = getJSONFromIPFS(event.params.orgInfo.metadataURI);
+    if (ipfs_data) {
+      let imageURL = ipfs_data.get("websiteURL");
+      if (imageURL) {
+        org.image = imageURL.toString();
       }
-  
-      let twitterId = ipfs_data.get("twitterId")
-      if(twitterId){
-        org.twitterId = twitterId.toString()
+
+      let websiteURL = ipfs_data.get("websiteURL");
+      if (websiteURL) {
+        org.websiteURL = websiteURL.toString();
       }
-  
-      let discordServer = ipfs_data.get("discordServer")
-      if(discordServer){
-        org.discordServer = discordServer.toString()
+
+      let twitterId = ipfs_data.get("twitterId");
+      if (twitterId) {
+        org.twitterId = twitterId.toString();
       }
-  
-      let contactEmail = ipfs_data.get("contactEmail")
-      if(contactEmail){
-        org.contactEmail = contactEmail.toString()
+
+      let discordServer = ipfs_data.get("discordServer");
+      if (discordServer) {
+        org.discordServer = discordServer.toString();
       }
-  
-      let industry = ipfs_data.get("industry")
-      if(industry){
-        org.industry = industry.toString()
+
+      let contactEmail = ipfs_data.get("contactEmail");
+      if (contactEmail) {
+        org.contactEmail = contactEmail.toString();
+      }
+
+      let industry = ipfs_data.get("industry");
+      if (industry) {
+        org.industry = industry.toString();
       }
     }
-    
+
     org.save();
+  }
+}
+
+export function handleEventCreatedEvent(event: EventCreatedEvent): void {
+  const relatedOrgisation = Organisation.load(event.params.OrgId.toString());
+  if (relatedOrgisation != null) {
+    let eventObj = new Event(event.params.eventContractAddress.toHex());
+
+    eventObj.code = event.params.code;
+    eventObj.name = event.params.name;
+    eventObj.start_date = event.params.start_date;
+    eventObj.end_date = event.params.end_date;
+
+    eventObj.organisation = relatedOrgisation.id;
+    eventObj.save();
+
+    EventBadge.create(event.params.eventContractAddress);
+    log.info("[SELF-INFO]Start monitor event contract {}", [
+      event.params.eventContractAddress.toHex(),
+    ]);
   }
 }

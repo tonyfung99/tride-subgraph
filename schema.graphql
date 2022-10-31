@@ -10,11 +10,13 @@ type Organisation @entity {
   name: String
   description: String
   metadataURI: String
+  image: String
   websiteURL: String
   twitterId: String
   discordServer: String
   contactEmail: String
   industry: String
+  events: [Event!]! @derivedFrom(field: "organisation")
 }
 
 type Skill @entity {
@@ -24,5 +26,42 @@ type Skill @entity {
   category_id: BigInt
   subcategory_id: BigInt
   type: String
-  # type: String!
+}
+
+# General Type
+type User @entity {
+  id: ID!
+  badge: [EventBadge!] 
+}
+
+# interface
+# interface Badge {
+#   id: ID!
+#   tokenId: BigInt!
+# }
+
+# Event Related
+type Event @entity {
+  id: ID! # address
+  code: String
+  name: String
+  start_date: BigInt
+  end_date: BigInt
+  organisation: Organisation!
+  event_badges: [EventBadge!]! @derivedFrom(field: "event")
+}
+
+type EventBadge @entity {
+  id: ID! # <contract_address>-<tokenId>
+  tokenId: BigInt!
+  name: String
+  description: String
+  image: String
+  start_time: BigInt
+  end_time: BigInt
+  role: String
+  contentURL: String
+  quota: BigInt
+  owner: [User!] @derivedFrom(field: "badge")
+  event: Event!
 }
