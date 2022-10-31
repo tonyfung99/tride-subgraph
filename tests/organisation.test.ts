@@ -2,17 +2,25 @@ import {
   assert,
   describe,
   test,
-  clearStore,
   beforeAll,
-  afterAll,
   mockIpfsFile,
+  dataSourceMock,
 } from "matchstick-as/assembly/index";
-import { Address, JSONValue, Value } from "@graphprotocol/graph-ts";
-import { handleCreateOrganisation, handleEventCreatedEvent, handleUpdateOrganisation } from "../src/organisation";
-import { createCreateOrgProfileEvent, createEventCreatedEvent, createUpdateOrgProfileEvent } from "./organisation-utils";
+import { Address, dataSource, JSONValue, Value } from "@graphprotocol/graph-ts";
+import {
+  handleCreateOrganisation,
+  handleEventCreatedEvent,
+  handleUpdateOrganisation,
+} from "../src/organisation";
+import {
+  createCreateOrgProfileEvent,
+  createEventCreatedEvent,
+  createUpdateOrgProfileEvent,
+} from "./helper/organisation.utils";
 import { log } from "matchstick-as/assembly/log";
 
 import { processItem } from "../src/Organisation";
+import { mockEventBadgesAddress } from "./__setup.test";
 export { processItem } from "../src/Organisation";
 
 // Tests structure (matchstick-as >=0.5.0)
@@ -105,56 +113,113 @@ export function processItem2(value: JSONValue, userData: Value): void {
 
 describe("Organisation", () => {
   beforeAll(() => {
-    mockIpfsFile('FAKE_ORGANISATION_1', 'tests/ipfs_file/organisations/organisation_1.json')
-    mockIpfsFile('FAKE_ORGANISATION_2', 'tests/ipfs_file/organisations/organisation_2.json')
-  })
+    mockIpfsFile(
+      "FAKE_ORGANISATION_1",
+      "tests/ipfs_file/organisations/organisation_1.json"
+    );
+    mockIpfsFile(
+      "FAKE_ORGANISATION_2",
+      "tests/ipfs_file/organisations/organisation_2.json"
+    );
+  });
 
-  test("store organisation", () => {
-    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://FAKE_ORGANISATION_1"))
+  test("Can store organisation", () => {
+    handleCreateOrganisation(
+      createCreateOrgProfileEvent(
+        0,
+        "Org_1",
+        "description of Org_1",
+        "ipfs://FAKE_ORGANISATION_1"
+      )
+    );
 
     assert.fieldEquals("Organisation", "0", "id", "0");
     assert.fieldEquals("Organisation", "0", "name", "Org_1");
-    assert.fieldEquals("Organisation", "0", "description", "description of Org_1");
-    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://FAKE_ORGANISATION_1");
-    assert.fieldEquals("Organisation", "0", "websiteURL", "https://www.esperanza.life/");
+    assert.fieldEquals(
+      "Organisation",
+      "0",
+      "description",
+      "description of Org_1"
+    );
+    assert.fieldEquals(
+      "Organisation",
+      "0",
+      "metadataURI",
+      "ipfs://FAKE_ORGANISATION_1"
+    );
+    assert.fieldEquals(
+      "Organisation",
+      "0",
+      "websiteURL",
+      "https://www.esperanza.life/"
+    );
     assert.fieldEquals("Organisation", "0", "twitterId", "/");
     assert.fieldEquals("Organisation", "0", "discordServer", "/");
     assert.fieldEquals("Organisation", "0", "contactEmail", "/");
     assert.fieldEquals("Organisation", "0", "industry", "/");
-  })
+  });
 
-  test("update organisation", () => {
+  test("Can update organisation inforamtion", () => {
     let firstAdmin = Address.fromString(
       "0x0000000000000000000000000000000000000001"
     );
 
-    handleCreateOrganisation(createCreateOrgProfileEvent(0, "Org_1", "description of Org_1", "ipfs://FAKE_ORGANISATION_1"))
+    handleCreateOrganisation(
+      createCreateOrgProfileEvent(
+        0,
+        "Org_1",
+        "description of Org_1",
+        "ipfs://FAKE_ORGANISATION_1"
+      )
+    );
 
-    handleUpdateOrganisation(createUpdateOrgProfileEvent(0, firstAdmin, "Org_1_update", "description of Org_1", "ipfs://FAKE_ORGANISATION_2"))
+    handleUpdateOrganisation(
+      createUpdateOrgProfileEvent(
+        0,
+        firstAdmin,
+        "Org_1_update",
+        "description of Org_1",
+        "ipfs://FAKE_ORGANISATION_2"
+      )
+    );
     assert.fieldEquals("Organisation", "0", "id", "0");
     assert.fieldEquals("Organisation", "0", "name", "Org_1_update");
-    assert.fieldEquals("Organisation", "0", "description", "description of Org_1");
-    assert.fieldEquals("Organisation", "0", "metadataURI", "ipfs://FAKE_ORGANISATION_2");
-    assert.fieldEquals("Organisation", "0", "websiteURL", "https://www.esperanza.life/");
+    assert.fieldEquals(
+      "Organisation",
+      "0",
+      "description",
+      "description of Org_1"
+    );
+    assert.fieldEquals(
+      "Organisation",
+      "0",
+      "metadataURI",
+      "ipfs://FAKE_ORGANISATION_2"
+    );
+    assert.fieldEquals(
+      "Organisation",
+      "0",
+      "websiteURL",
+      "https://www.esperanza.life/"
+    );
     assert.fieldEquals("Organisation", "0", "twitterId", "/");
     assert.fieldEquals("Organisation", "0", "discordServer", "/");
     assert.fieldEquals("Organisation", "0", "contactEmail", "/");
     assert.fieldEquals("Organisation", "0", "industry", "updated");
-  })
-  
-  test("create event contract", () => {
-    let newContract = Address.fromString(
-      "0x0000000000000000000000000000000000000001"
-    );
+  });
 
-    handleEventCreatedEvent(createEventCreatedEvent(0, "code", "name", 0, 1, newContract));
+  test("Can create event and start monitor the event badges contract", () => {
+    let newContract = Address.fromString(mockEventBadgesAddress);
+
+    handleEventCreatedEvent(
+      createEventCreatedEvent(0, "code", "name", 0, 1, newContract)
+    );
 
     assert.fieldEquals("Event", newContract.toHex(), "id", newContract.toHex());
     assert.fieldEquals("Event", newContract.toHex(), "code", "code");
     assert.fieldEquals("Event", newContract.toHex(), "name", "name");
     assert.fieldEquals("Event", newContract.toHex(), "start_date", "0");
     assert.fieldEquals("Event", newContract.toHex(), "end_date", "1");
-    assert.fieldEquals("Event", newContract.toHex(), "contractAddress", newContract.toHex());
     assert.fieldEquals("Event", newContract.toHex(), "organisation", "0");
-  })
+  });
 });

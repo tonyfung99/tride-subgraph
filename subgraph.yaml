@@ -18,6 +18,7 @@ dataSources:
         - Organisation
         - Skill
         - Event
+        - User
       abis:
         - name: Organisation
           file: ./abis/Organisation.json
@@ -35,4 +36,29 @@ dataSources:
         - event: EventCreatedEvent(uint256,string,string,uint256,uint256,address)
           handler: handleEventCreatedEvent
       file: ./src/organisation.ts
+templates:
+  - name: EventBadge
+    kind: ethereum/contract
+    network: mbase
+    source:
+      abi: EventBadge
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - EventBadge
+      abis:
+        - name: EventBadge
+          file: ./abis/EventBadge.json
+      eventHandlers:
+        - event: createdEventSession(indexed address,uint256,(string,string,uint256,uint256,string,string,uint256))
+          handler: handleCreateEventSession
+        - event: updatedEventSession(indexed address,uint256,(string,string,uint256,uint256,string,string,uint256))
+          handler: handleUpdateEventSession
+        - event: addedInvitee(indexed address,uint256,indexed address)
+          handler: handleAddedInvitee
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleMint
+      file: ./src/eventBadge.ts
 features: ["ipfsOnEthereumContracts"]

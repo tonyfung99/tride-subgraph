@@ -3,3 +3,4 @@ build
 generated
 tests/.bin
 tests/.latest.json
+data/
