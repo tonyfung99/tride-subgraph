@@ -57,6 +57,7 @@ type EventBadge @entity {
   name: String
   description: String
   image: String
+  attributes: [String!]
   start_time: BigInt
   end_time: BigInt
   role: String

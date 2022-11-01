@@ -1,4 +1,4 @@
-import { ipfs, log } from "@graphprotocol/graph-ts";
+import { ipfs, JSONValue, log } from "@graphprotocol/graph-ts";
 import { Event, EventBadge } from "../generated/schema";
 import {
   createdEventSession,
@@ -35,8 +35,23 @@ export function handleCreateEventSession(event: createdEventSession): void {
     eventBadgeObj.event = eventObj.id;
 
     const ipfs_data = getJSONFromIPFS(event.params.session.contentUri);
-    eventBadgeObj.image = getValueFromJSON(ipfs_data, "image");
     if (ipfs_data) {
+      let image = ipfs_data.get("image");
+      if (image) {
+        eventBadgeObj.image = image.toString();
+      }
+
+      let attributes = ipfs_data.get("attributes");
+      if (attributes) {
+        let newAttributes: Array<string> = [];
+        let attributesArray = attributes.toArray();
+        let currentValue: JSONValue;
+        for (let i = 0; i < attributesArray.length; i++) {
+          currentValue = attributesArray[i].toObject().mustGet("value");
+          newAttributes.push(currentValue.toString());
+        }
+        eventBadgeObj.attributes = newAttributes;
+      }
     }
 
     eventBadgeObj.save();
@@ -57,6 +72,27 @@ export function handleUpdateEventSession(event: updatedEventSession): void {
     eventBadgeObj.role = event.params.session.role;
     eventBadgeObj.quota = event.params.session.quota;
     eventBadgeObj.contentURL = event.params.session.contentUri;
+
+    const ipfs_data = getJSONFromIPFS(event.params.session.contentUri);
+    if (ipfs_data) {
+      let image = ipfs_data.get("image");
+      if (image) {
+        eventBadgeObj.image = image.toString();
+      }
+
+      let attributes = ipfs_data.get("attributes");
+      if (attributes) {
+        let newAttributes: Array<string> = [];
+        let attributesArray = attributes.toArray();
+        let currentValue: JSONValue;
+        for (let i = 0; i < attributesArray.length; i++) {
+          currentValue = attributesArray[i].toObject().mustGet("value");
+          newAttributes.push(currentValue.toString());
+        }
+        eventBadgeObj.attributes = newAttributes;
+      }
+    }
+
     eventBadgeObj.save();
 
     log.info("[SELF-INFO]Updated Event Badges | id: {}", [eventBadgeObj.id]);
