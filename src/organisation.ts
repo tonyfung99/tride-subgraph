@@ -103,7 +103,7 @@ export function handleCreateOrganisation(event: createOrgProfileEvent): void {
 
   const ipfs_data = getJSONFromIPFS(event.params.orgInfo.metadataURI);
   if (ipfs_data) {
-    let imageURL = ipfs_data.get("websiteURL");
+    let imageURL = ipfs_data.get("imageURL");
     if (imageURL) {
       org.image = imageURL.toString();
     }
@@ -150,7 +150,7 @@ export function handleUpdateOrganisation(event: updateOrgProfileEvent): void {
 
     const ipfs_data = getJSONFromIPFS(event.params.orgInfo.metadataURI);
     if (ipfs_data) {
-      let imageURL = ipfs_data.get("websiteURL");
+      let imageURL = ipfs_data.get("imageURL");
       if (imageURL) {
         org.image = imageURL.toString();
       }
