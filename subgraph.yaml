@@ -18,6 +18,7 @@ dataSources:
         - Organisation
         - Skill
         - Event
+        - Badge
         - User
       abis:
         - name: Organisation

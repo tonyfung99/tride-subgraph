@@ -35,6 +35,7 @@ describe("Event Badge information", () => {
     const targetId = eventBadgesAddress.toHex() + "-" + sessionId.toString();
     assert.fieldEquals("EventBadge", targetId, "id", targetId);
     assert.fieldEquals("EventBadge", targetId, "name", fakeEventSessionName);
+    assert.fieldEquals("EventBadge", targetId, "type", "EVENT");
   });
 
   test("Can update event badges", () => {

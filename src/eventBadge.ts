@@ -13,9 +13,6 @@ import {
   getValueFromJSON,
 } from "./helper/utils";
 
-// - event: createdEventSession(indexed address,uint256,(string,string,uint256,uint256,string,string,uint256))
-// handler: handleCreateEventSession
-
 export function handleCreateEventSession(event: createdEventSession): void {
   let eventObj = new Event(event.address.toHex());
 
@@ -26,6 +23,7 @@ export function handleCreateEventSession(event: createdEventSession): void {
 
     eventBadgeObj.tokenId = event.params.sessionId;
     eventBadgeObj.name = event.params.session.name;
+    eventBadgeObj.type = "EVENT";
     eventBadgeObj.description = event.params.session.description;
     eventBadgeObj.start_time = event.params.session.start_time;
     eventBadgeObj.end_time = event.params.session.end_time;
