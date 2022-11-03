@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Organisation
-    network: mbase
+    network: mumbai
     source: 
-      address: "0xe3Fc5B4bAA3ABA6e48463C4445dA05a33405CAc8"
+      address: "0x65fdD921e5d591CFf8d888D68194F7360d5354ae"
       abi: Organisation
-      startBlock: 3071700
+      startBlock: 28953935
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -40,7 +40,7 @@ dataSources:
 templates:
   - name: EventBadge
     kind: ethereum/contract
-    network: mbase
+    network: mumbai
     source:
       abi: EventBadge
     mapping:
