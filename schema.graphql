@@ -31,14 +31,24 @@ type Skill @entity {
 # General Type
 type User @entity {
   id: ID!
-  badge: [EventBadge!] 
+  badge: [Badge!] 
 }
 
-# interface
-# interface Badge {
-#   id: ID!
-#   tokenId: BigInt!
-# }
+# Badges Related
+interface Badge {
+  id: ID!
+  type: BadgesType!
+  tokenId: BigInt!
+  name: String
+  image: String
+  attributes: [String!]
+  owner: [User!] @derivedFrom(field: "badge")
+}
+
+enum BadgesType {
+  EVENT
+  WORK
+}
 
 # Event Related
 type Event @entity {
@@ -51,8 +61,9 @@ type Event @entity {
   event_badges: [EventBadge!]! @derivedFrom(field: "event")
 }
 
-type EventBadge @entity {
+type EventBadge implements Badge @entity {
   id: ID! # <contract_address>-<tokenId>
+  type: BadgesType!
   tokenId: BigInt!
   name: String
   description: String
