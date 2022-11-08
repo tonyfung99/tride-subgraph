@@ -50,6 +50,11 @@ export function handleCreateEventSession(event: createdEventSession): void {
         }
         eventBadgeObj.attributes = newAttributes;
       }
+    } else {
+      log.error(
+        "[ERROR] Unable to get JSON data for tokenId {} with path: {}",
+        [event.params.sessionId.toString(), event.params.session.contentUri]
+      );
     }
 
     eventBadgeObj.save();
